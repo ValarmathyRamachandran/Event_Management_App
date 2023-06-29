@@ -71,6 +71,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'event_management_app.wsgi.application'
 
+AUTH_USER_MODEL = 'accounts.User'
+
 
 
 
