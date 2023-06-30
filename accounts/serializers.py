@@ -32,10 +32,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
         Create and save a new User instance.
         Args:validated_data (dict): Validated data containing the user attributes.
         Returns: The created User instance.
-
         """
-        password = validated_data.get('password') 
-        #hashed_password = make_password(password)
+        
         user = User.objects.create_user(**validated_data) 
         return user
 
