@@ -24,7 +24,7 @@ class RegistrationApiView(generics.GenericAPIView):
             serializer.is_valid(raise_exception=True)
             email = serializer.validated_data.get('email')
             if User.objects.filter(email=email).exists():
-                return Response({'message': "User already exists. Please login.", 'code': 401}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'message': "User already exists. Please login.", 'code': 401})
             user.is_active = False
             user=user.save()
             return Response({'message': "User was registered successfully", 'code': 200, 'data': user})
