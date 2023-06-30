@@ -28,7 +28,7 @@ class EventsApiView(APIView):
 
     def get(self, request):
         """
-        Get method is for get all Books and user details
+        Get method is used to get all events and user details
         """
         try:
             user = request.user
@@ -39,3 +39,36 @@ class EventsApiView(APIView):
             return Response({'message':'Only Admin can perform this action','code':400})
         except Exception as e:
             return Response({'message':'OOps! Something went worng,Please try again later','code':416,'error':str(e)})
+
+    def patch(self, request, pk):
+        """
+        Update method is used to update events by id
+        """
+        user = request.user
+        try:
+            if user.is_admin:
+                event = Event.objects.get(pk=pk)
+                event = EventSerializer(event, request.data, partial=True)
+                event.is_valid(raise_exception=True)
+                event.save()
+                return Response({'message':'events were updated successfully','code':200,'data':event.data})
+            return Response({'message':'Invalid Entry','code':400})
+        except Exception as e:
+            return Response({'message':'OOps! Something went worng,Please try again later','code':416,'error':str(e)})
+
+
+    def delete(self, request, pk):
+        """
+        Delete method is used to delete event by id
+        """
+        user = request.user
+        try:
+            if user.is_admin:
+                event = Event.objects.get(pk=pk)
+                event.is_delete = True
+                event.save()
+                return Response({'message':'events were deleted successfully','code':200,'data':event.is_delete})
+            return Response({'message':'Only Admin have the access to delete it','code':400})
+        except Exception as e:
+            return Response({'message':'OOps! Something went worng,Please try again later','code':416,'error':str(e)})
+
