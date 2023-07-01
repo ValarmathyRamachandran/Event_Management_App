@@ -1,6 +1,6 @@
 from datetime import time
+from django.utils import timezone
 from django.db import models
-
 from accounts.models import User
 
 
@@ -14,6 +14,9 @@ class Event(models.Model):
     location = models.CharField(max_length=255)
     online = models.BooleanField(default=False)
     is_delete = models.BooleanField(default=False)
+    max_seats = models.PositiveIntegerField(default=10)
+    booking_start_time = models.DateTimeField(default=timezone.now)
+    booking_end_time = models.DateTimeField(default=timezone.now() + timezone.timedelta(days=7))
 
     def __str__(self):
         return self.title
