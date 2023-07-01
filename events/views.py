@@ -1,3 +1,4 @@
+from datetime import datetime
 from selectors import EVENT_WRITE
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -113,6 +114,11 @@ class BookTicketAPIView(APIView):
                 event_id = request.data.get('event_id')
                 event = Event.objects.get(pk=event_id)
 
+                 # Check if the booking window is open
+                current_time = datetime.now()
+                if current_time < event.booking_start_time or current_time > event.booking_end_time:
+                    return Response({'message': 'Booking is closed for this event', 'code': 400})
+
                 # Check if the user has already booked tickets for an event
                 if Ticket.objects.filter(event_id=event_id, user=user).exists():
                     return Response({'message': 'You have already booked Tickets for this event', 'code': 400})
@@ -161,3 +167,33 @@ class BookedEventsAPIView(APIView):
             return Response({'message': 'Registered events retrieved successfully', 'code': 200, 'data': serializer.data})
         except Exception as e:
             return Response({'message': 'Error: Unable to retrieve booked events. Please check your network connection and try again.', 'code': 500, 'error': str(e)})
+
+
+class CancelTicketAPIView(APIView):
+    def post(self, request):
+        try:
+            ticket_id = request.data.get('ticket_id')
+
+            if not ticket_id:
+                return Response({'message': 'Ticket ID is required', 'code': 400})
+
+            ticket = Ticket.objects.get(pk=ticket_id)
+
+            # Check if the ticket belongs to the requesting user
+            if ticket.user != request.user:
+                return Response({'message': 'You are not authorized to cancel this ticket', 'code': 401})
+
+            # Check if the ticket is already cancelled
+            if ticket.is_cancelled:
+                return Response({'message': 'This ticket has already been cancelled', 'code': 400})
+
+            ticket.is_cancelled = True
+            ticket.save()
+
+            return Response({'message': 'Ticket cancellation successful', 'code': 200})
+
+        except Ticket.DoesNotExist:
+            return Response({'message': 'Ticket not found', 'code': 404})
+
+        except Exception as e:
+            return Response({'message': 'Invalid Entry. Please try again later.', 'code': 500, 'error': str(e)})
