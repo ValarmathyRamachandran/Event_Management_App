@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'accounts',
     'events',
     
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

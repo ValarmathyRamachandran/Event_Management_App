@@ -9,11 +9,15 @@ from rest_framework import permissions
 from .models import Event, Ticket
 from accounts.views import User
 from events.serializers import EventSerializer
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 
 class EventsApiView(APIView):
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+   
     def post(self, request):
         """
         method is used to Add events by admin
