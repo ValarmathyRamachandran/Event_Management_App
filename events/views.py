@@ -1,8 +1,13 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import EventSerializer
+from rest_framework import generics
+from accounts.models import User
+from .serializers import EventSerializer, TicketSerializer
 from rest_framework import permissions
-from .models import Event
+from .models import Event, Ticket
+from rest_framework import generics
+from accounts.views import User
+from events.serializers import EventSerializer
 
 
 
@@ -72,3 +77,49 @@ class EventsApiView(APIView):
         except Exception as e:
             return Response({'message':'OOps! Something went worng,Please try again later','code':416,'error':str(e)})
 
+class EventSummaryAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """
+        Get summary of events for admin users.
+        """
+        try:
+            user = request.user
+            if user.is_admin:
+                total_events = Event.objects.count()
+                total_users = User.objects.count()
+                return Response({'message': 'Event summary view displayed successfully','code': 200,
+                'data': {'total_events': total_events, 'total_users': total_users}})
+            return Response({'message': 'Only Admin can perform this action', 'code': 400})
+        except Exception as e:
+            return Response({'message': 'Oops! Something went wrong. Please try again later', 'code': 416, 'error': str(e)})
+
+class ListEvents(APIView):
+    def get(self, request):
+        try:
+            user = request.user
+            if user:
+                all_events = Event.objects.all()
+                event_s = EventSerializer(all_events, many=True)
+                return Response({ 'message': 'all events displayed successfully','code':200,'data': event_s.data})
+            return Response({'message':'Invalid Entry','code':400})
+        except Exception as e:
+            return Response({'message':'OOps! Something went worng,Please try again later','code':416,'error':str(e)})
+
+class BookTicketAPIView(APIView):
+    serializer_class = TicketSerializer
+    def post(self, request):
+        try:
+            user = request.user
+            if user:
+                event_id = request.data.get('event_id')
+                data = {"event":event_id, "user":user.id,"quantity":1}
+                serializer = TicketSerializer(data=data)  
+           
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response({'message':"Ticket for an event was successfully Booked","code":201,"data":"test"})
+            return Response({'message':'Invalid credentials','code':400})
+        except Exception as e:
+            return Response({'message':'OOps! Something went worng,Please try again later','code':416,'error':str(e)})
