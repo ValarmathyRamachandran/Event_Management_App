@@ -14,6 +14,7 @@ class Event(models.Model):
     location = models.CharField(max_length=255)
     online = models.BooleanField(default=False)
     is_delete = models.BooleanField(default=False)
+    max_seats = models.PositiveIntegerField(default=10)
 
     def __str__(self):
         return self.title
