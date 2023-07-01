@@ -1,1 +1,40 @@
+# Ignore compiled Python files
+*.pyc
+__pycache__/
+
+# Ignore the virtual environment
+venv/
+env/
 *.env
+
+# Ignore development-specific files
+*.sqlite3
+*.db
+*.log
+*.pot
+*.pyc
+
+# Ignore local settings
+local_settings.py
+
+# Ignore static and media files
+staticfiles/
+media/
+
+# Ignore secret keys and sensitive information
+*.secret
+*.key
+
+# Ignore IDE-specific files and directories
+.vscode/
+.idea/
+
+# Ignore macOS-specific files
+.DS_Store
+
+# Ignore testing and coverage files
+.coverage
+.pytest_cache/
+
+# Ignore generated documentation
+docs/_build/
