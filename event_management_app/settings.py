@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-*)e-@h33q+-1m(4dfc+n_-4e76v(4d@a4rgq7-*dvjh90w%xlw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['event-management-app.azurewebsites.net', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -94,10 +94,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'event_management_db',
-        'USER':  config('DATABASE_USER'),
-        'PASSWORD': config('DATABASE_PASSWORD'),
-        'HOST': '127.0.0.1',
+        'USER':  os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('HOST'),
         'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 
