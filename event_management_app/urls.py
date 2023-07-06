@@ -26,6 +26,7 @@ schema_view = get_schema_view(
         default_version='v1',
         description="Test description",
     ),
+    url='https://event-management-app.azurewebsites.net/',
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
